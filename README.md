@@ -8,9 +8,9 @@ TEAM MEMBERS:
 4) Nitesh kumar -2021CSB1117
 
 
-if u want to change any value of register change in main function of simulator
-save your machine code file in same directory with name input.mc
-running of the code will print every instruction executing in code
-there will be a streamed text file of intruction encoded
-and a memory file , in which every memory address which is used have its value
+1) if u want to change any value of register change in main function of simulator
+2) save your machine code file in same directory with name input.mc
+3) running of the code will print every instruction executing in code
+4) there will be a streamed text file of intruction encoded
+5) and a memory file , in which every memory address which is used have its value
 
