@@ -1,6 +1,6 @@
-                                                                    ================================================
-                                                                       Functional Simulator for RISCV Processor   
-                                                                    ================================================
+   ================================================
+   Functional Simulator for RISCV Processor   
+   ================================================
 TEAM MEMBERS:
 1) Mohit kumar bhuria - 2021CSB1109
 2) Hitesh singla - 2021CSB1094
