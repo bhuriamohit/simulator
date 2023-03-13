@@ -453,7 +453,7 @@ struct instr convert(string a)
         {
             r = r + s[i];
         }
-        // console.log("rd : " + toint(r))
+        // ("rd : " + toint(r))
         string fun3 = "";
 
         for (int i = 17; i < 20; i++)
@@ -461,14 +461,14 @@ struct instr convert(string a)
             fun3 = fun3 + s[i];
         }
 
-        // console.log("fun3 : " + fun3)
+        // ("fun3 : " + fun3)
 
         string r1 = "";
         for (int i = 12; i < 17; i++)
         {
             r1 = r1 + s[i];
         }
-        // console.log("rs1 : "+toint(r1))
+        // ("rs1 : "+toint(r1))
 
         string imm = "";
         for (int i = 0; i < 12; i++)
@@ -476,7 +476,7 @@ struct instr convert(string a)
             imm = imm + s[i];
         }
 
-        // console.log("imm : "+toint(imm))
+        // ("imm : "+toint(imm))
         ret.rs1 = toint(r1);
         ret.rd = toint(r);
         if (imm[0] == '1')
@@ -532,14 +532,14 @@ struct instr convert(string a)
             fun3 = fun3 + s[i];
         }
 
-        // console.log("fun3 : " + fun3)
+        // ("fun3 : " + fun3)
 
         string rs1 = "";
         for (int i = 12; i < 17; i++)
         {
             rs1 = rs1 + s[i];
         }
-        // console.log("rs1 : "+toint(rs1))
+        // ("rs1 : "+toint(rs1))
 
         string rs2 = "";
         for (int i = 7; i < 12; i++)
@@ -547,10 +547,10 @@ struct instr convert(string a)
             rs2 = rs2 + s[i];
         }
 
-        // console.log("rs2 : "+toint(rs2))
+        // ("rs2 : "+toint(rs2))
 
-        // console.log("fun7 : "+fun7)
-        // console.log("imm : " + toint(imm))
+        // ("fun7 : "+fun7)
+        // ("imm : " + toint(imm))
 
         ret.rs1 = toint(rs1);
         ret.rs2 = toint(rs2);
@@ -602,14 +602,14 @@ struct instr convert(string a)
             fun3 = fun3 + s[i];
         }
 
-        // console.log("fun3 : " + fun3)
+        // ("fun3 : " + fun3)
 
         string rs1 = "";
         for (int i = 12; i < 17; i++)
         {
             rs1 = rs1 + s[i];
         }
-        // console.log("rs1 : "+toint(rs1))
+        // ("rs1 : "+toint(rs1))
 
         string rs2 = "";
         for (int i = 7; i < 12; i++)
@@ -617,8 +617,8 @@ struct instr convert(string a)
             rs2 = rs2 + s[i];
         }
 
-        // console.log("rs2 : "+toint(rs2))
-        // console.log("imm : " + toint(imm))
+        // ("rs2 : "+toint(rs2))
+        // ("imm : " + toint(imm))
         ret.rs1 = toint(rs1);
         ret.rs2 = toint(rs2);
         if (imm[0] == '1')
@@ -657,7 +657,7 @@ struct instr convert(string a)
 
         return ret;
 
-        // console.log("fun7 : "+fun7)
+        // ("fun7 : "+fun7)
     }
     else if (opcode == "0110111" || opcode == "0010111")
     {
@@ -667,7 +667,7 @@ struct instr convert(string a)
         {
             rd = rd + s[i];
         }
-        // console.log("rd : " + toint(rd))
+        // ("rd : " + toint(rd))
 
         string imm = "";
         for (int i = 0; i < 20; i++)
@@ -675,7 +675,7 @@ struct instr convert(string a)
             imm = imm + s[i];
         }
 
-        // console.log("imm : "+toint(imm))
+        // ("imm : "+toint(imm))
 
         ret.rd = toint(rd);
         if (imm[0] == '1')
@@ -706,7 +706,7 @@ struct instr convert(string a)
         {
             rd = rd + s[i];
         }
-        // console.log("rd : " + toint(rd))
+        // ("rd : " + toint(rd))
 
         string imm = "";
         imm = imm + s[0];
@@ -721,7 +721,7 @@ struct instr convert(string a)
         }
         imm += '0';
 
-        // console.log("imm : "+toint(imm))
+        // ("imm : "+toint(imm))
 
         ret.rd = toint(rd);
         if (imm[0] == '1')
@@ -744,7 +744,7 @@ struct instr convert(string a)
         {
             r = r + s[i];
         }
-        // console.log("rd : " + toint(r))
+        // ("rd : " + toint(r))
         string fun3 = "";
 
         for (int i = 17; i < 20; i++)
@@ -752,14 +752,14 @@ struct instr convert(string a)
             fun3 = fun3 + s[i];
         }
 
-        // console.log("fun3 : " + fun3)
+        // ("fun3 : " + fun3)
 
         string r1 = "";
         for (int i = 12; i < 17; i++)
         {
             r1 = r1 + s[i];
         }
-        // console.log("rs1 : "+toint(r1))
+        // ("rs1 : "+toint(r1))
 
         string imm = "";
         for (int i = 0; i < 12; i++)
@@ -767,7 +767,7 @@ struct instr convert(string a)
             imm = imm + s[i];
         }
 
-        // console.log("imm : "+toint(imm))
+        // ("imm : "+toint(imm))
         string fun7 = "";
         for (int i = 0; i < 7; i++)
         {
@@ -800,7 +800,7 @@ struct instr convert(string a)
         {
             r = r + s[i];
         }
-        // console.log("rd : " + toint(r))
+        // ("rd : " + toint(r))
         string fun3 = "";
 
         for (int i = 17; i < 20; i++)
@@ -808,14 +808,14 @@ struct instr convert(string a)
             fun3 = fun3 + s[i];
         }
 
-        // console.log("fun3 : " + fun3)
+        // ("fun3 : " + fun3)
 
         string r1 = "";
         for (int i = 12; i < 17; i++)
         {
             r1 = r1 + s[i];
         }
-        // console.log("rs1 : "+toint(r1))
+        // ("rs1 : "+toint(r1))
 
         string imm = "";
         for (int i = 0; i < 12; i++)
@@ -823,7 +823,7 @@ struct instr convert(string a)
             imm = imm + s[i];
         }
 
-        // console.log("imm : "+toint(imm))
+        // ("imm : "+toint(imm))
         string fun7 = "";
         for (int i = 0; i < 7; i++)
         {
