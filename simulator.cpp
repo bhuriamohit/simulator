@@ -1,25 +1,33 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 vector<string> MachineCode;
 map<string, int> memory;
 int pc = 0;
 int memoutput;
+string convertHexa(int);
+int execute(struct instr );
 
 int reg[32];
 string dectostr(int n)
-{
+{int k=n;
     string s = "";
     if (n == 0)
     {
         s = "0";
         return s;
     }
+    if(n<0){
+        //s="-";
+        n=-n;
+    }
     while (n > 0)
     {
         char c = n % 10 + '0';
         s = s + c;
         n /= 10;
+    }
+    if(k<0){
+        s=s+"-";
     }
     reverse(s.begin(), s.end());
     return s;
@@ -68,10 +76,13 @@ string dectobin(int integer, int length)
     }
     else
     {
-        integer += pow(2, length - 1);
-        string temp = bitset<32>(integer).to_string();
-        int le = temp.length();
-        string binary = "1" + string(length - 1 - le, '0') + temp.substr(1);
+         integer= (1 << 31) + integer;
+       // integer += pow(2, length - 1);
+        // string temp = bitset<32>(integer).to_string();
+        // int le = temp.length();
+        // string binary = "1" + string(length - 1 - le, '0') + temp[1];
+         string binary = bitset<32>(integer).to_string();
+         binary[0]='1';
         return binary;
     }
 }
@@ -132,6 +143,7 @@ void print(struct instr in)
     cout << "rs1 : " << in.rs1 << endl;
     cout << "rs2 : " << in.rs2 << endl;
     cout << "imm: " << in.imm << endl;
+    cout<<"alu: "<<execute(in)<<endl;
 }
 string tobin(char a)
 {
@@ -952,7 +964,7 @@ int execute(struct instr ins)
     if (op == "lw")
     {
         alu = reg[rs1] + imm;
-        alu = savefun(alu, 15);
+        alu = savefun(alu, 31);
     }
     if (op == "lh")
     {
@@ -1045,6 +1057,16 @@ int execute(struct instr ins)
         alu = reg[rs1] + imm;
         alu = savefun(alu, 7);
     }
+    if (op == "sh")
+    {
+        alu = reg[rs1] + imm;
+        alu = savefun(alu, 15);
+    }
+    if (op == "sw")
+    {
+        alu = reg[rs1] + imm;
+        alu = savefun(alu, 31);
+    }
 
     if (op == "jalr")
     {
@@ -1054,7 +1076,7 @@ int execute(struct instr ins)
     if (op == "jal")
     {
         alu = imm;
-        alu = savefun(alu, 31);
+         alu = savefun(alu, 31);
     }
 
     if(op=="lui")
@@ -1076,13 +1098,14 @@ void memoryfun(struct instr ins)
     {
         int alu = execute(ins);
         string save = dectostr(alu);
-        memory[save] = ins.rs1;
-        string s=save+ "  : " +dectostr(ins.rs1);
+        memory[save] =reg[ ins.rs2];
+        // string s=save+ "  : " +dectostr(reg[ins.rs1]);
     }
 
     if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
     {
         int alu = execute(ins);
+        
         string save = dectostr(alu);
         memoutput = memory[save];
     }
@@ -1103,14 +1126,21 @@ void writeback(struct instr ins)
     else if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
     {
         int rd = ins.rd;
-        reg[rd] = memoutput;
+        int alu=execute(ins);
+        // cout<<"write back alu ;"<<alu<<endl;
+        string s=dectostr(alu);
+        // cout<<"write back ka "<<rd<<endl;
+        reg[rd] = memory[s];
+        // cout<<"memory : "<<reg[rd]<<endl;
+
+        
     }
     else if(op=="lui")
     {
         int rd = ins.rd;
         reg[rd]=alu;
     }
-    if(op=="auipc")
+    else if(op=="auipc")
     {
         int rd = ins.rd;
         reg[rd]=alu+pc;
@@ -1139,6 +1169,25 @@ int address(struct instr ins)
 
     return add_pc;
 }
+string convertHexa(int number)
+{
+    string hexa;
+    // loop till number>0
+    while (number)
+    {
+        int rem = number % 16;
+        // when rem is less than 10 then store 0-9
+        // else store A - F
+        if (rem < 10)
+            hexa.push_back(rem + '0');
+        else
+            hexa.push_back(rem - 10 + 'A');
+
+        number = number / 16;
+    }
+    reverse(hexa.begin(), hexa.end());
+    return hexa;
+}
 string create_ins(struct instr instruction)
 {
     string op = instruction.op;
@@ -1157,7 +1206,7 @@ string create_ins(struct instr instruction)
     }
     if(op=="addi" || op=="xori" || op=="ori" || op=="andi" || op=="slli" || op=="srli"|| op=="srai" || op=="slti" || op=="sltiu")
     {
-        s = op +" x"  +dectostr(rd)+ " x" + dectostr(rs1) + " x" +dectostr(imm);
+        s = op +" x"  +dectostr(rd)+ " x" + dectostr(rs1)+" "  +dectostr(imm);
     }
     if(op=="lb" || op=="lh" || op=="lw" || op=="lbu" || op=="lhu" )
     {
@@ -1166,18 +1215,18 @@ string create_ins(struct instr instruction)
     }
     if(op=="sb" || op=="sh" || op=="sw" )
     {
-        s = op +" x"  +dectostr(rs1)+" "+dectostr(imm)+ "(x" + dectostr(rs2) + ")";
+        s = op +" x"  +dectostr(rs2)+" "+dectostr(imm)+ "(x" + dectostr(rs1) + ")";
     }
     if(op=="jal" || op=="jalr")
     {
         s = op +" x"  +dectostr(rd)+" "+dectostr(imm);
         
     }
-    // if(op=="lui" || op=="auipc")
-    // {
-    //     let s=obj.op+" x"+obj.rd+" "+obj.imm;
-    //     return s;
-    // }
+    if(op=="lui" || op=="auipc")
+    {
+        string s=op+" x"+dectostr(rd)+" "+dectostr(imm);
+        return s;
+    }
     if(op=="ecall" || op=="ebreak")
     {
         s=op;
@@ -1188,16 +1237,17 @@ string create_ins(struct instr instruction)
 void create_mem()
 {
     ofstream memfile("./Memory.txt");
+    memfile<<"Addresses    :     value stored \n";
     for(auto i:memory)
-    {
-        string s=i.first + "  :  "+dectostr(i.second)+"\n";
+    {string x=i.first;
+        string s=convertHexa(stoi(x)) + "  :  "+dectostr(i.second)+"\n";
         memfile<<s;
     }
 }
 int main()
 {
     readFile();
-    reg[3] = 15;
+    reg[3] = 0;
 
     int sz = MachineCode.size();
         ofstream ins_file("./instruction_file.txt");
@@ -1224,6 +1274,7 @@ int main()
         string s="x"+dectostr(i)+"  :  "+dectostr(reg[i])+"\n";
         regis<<s;
     }
+        create_mem();
 
     return 0;
 }
