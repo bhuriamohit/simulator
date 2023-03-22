@@ -4,8 +4,8 @@
 TEAM MEMBERS:
 1) Mohit kumar bhuria - 2021CSB1109
 2) Hitesh singla - 2021CSB1094
-3) Mohit meena - 2021CSB1110
-4) Nitesh kumar -2021CSB1117
+3) Nitesh kumar -2021CSB1117
+4) Mohit Meena -2021CSB1110
 
 Instructions:
 1) if u want to change any value of register change in main function of simulator
