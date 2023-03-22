@@ -13,4 +13,3 @@ Instructions:
 3) running of the code will print every instruction executing in code
 4) there will be a streamed text file of intruction encoded
 5) and a memory file , in which every memory address which is used have its value
-
