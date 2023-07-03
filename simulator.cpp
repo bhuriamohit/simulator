@@ -1,24 +1,378 @@
 #include <bits/stdc++.h>
+
 using namespace std;
+#include<bits/stdc++.h>
+using namespace std;
+int hitin=0;
+int missin=0;
+string repoli;
+int hit=0;
+int miss=0;
+int peep=0;
+int access=0;
+int accessin=0;
+int cold=0;
+int coldin=0;
+int capacity=0;
+int capacityin=0;
+class set_associative_cache {
+public:
+    int size, ass, curr, div,blocksize,cachesize,as,data=0;
+    string repoli;
+    unordered_map<int,int> usage;
+    unordered_map<int,int> queue;
+    unordered_map<int,vector<int>> array;
+
+public:
+    set_associative_cache(int size, int ass) {
+        this->size = size;
+        this->ass = ass;
+        this->curr = 0;
+        this->div = this->size / this->ass;
+        for(int i=0; i<this->div; i++) {
+            this->array[i] = {};
+        }
+    }
+public :
+     set_associative_cache() {
+        int blocksize;
+       int cachesize;
+       int as;
+       string repoli;
+       if(peep==0)
+       {cout<<"for intruction caches:"<<endl;
+        cout<<" NOTE:(>32)"<<endl;
+       peep++;}
+       else {
+        cout<<"for data caches:"<<endl;
+       this->data=1;
+       }
+
+       cout<<"enter cachesize:";
+
+       cin>>cachesize;
+      cout<<"enter block size:"<<endl;
+      cin>>blocksize;
+      
+      cout<<"Enter associativity:";
+      cin>>as;
+      cout<<"Enter replacement policy:"<<endl;
+     
+     cin>>repoli;
+       this->cachesize=cachesize;
+      this->repoli=repoli;
+      if(peep==0){
+        blocksize=blocksize/8;
+      }
+      this->blocksize=blocksize;
+        this->size = this->cachesize/this->blocksize;
+        this->ass = as;
+        this->curr = 0;
+        this->div = this->size / this->ass;
+        for(int i=0; i<this->div; i++) {
+            this->array[i] = {};
+        }
+    }
+
+    void print() {
+        for(int i=0; i<this->div; i++) {
+            cout<<"div"<<i+1<<"ass"<<this->array[i].size()<<endl;
+            for(int j=0; j<this->array[i].size(); j++) {
+                
+                cout << this->array[i][j] << " ";
+                for(int k=1;k<blocksize/4;k++){
+                    cout<<this->array[i][j]+(4*k)<<" ";
+                }
+                cout<<endl;
+            }
+            cout << endl;
+        }
+    }
+
+    string readcache(int addr) {
+        if(this->find(addr)=="present") {
+            if(this->usage.find(addr)==this->usage.end()) {
+                this->usage[addr-(addr%blocksize)]=1;
+            }
+            else {
+                this->usage[addr-(addr%blocksize)]++;
+            }
+            return "hit";
+        }
+        else {
+            return "miss";
+        }
+    }
+
+    string find(int addr) {
+        int pos = (addr-(addr%blocksize)) % this->div;
+        for(int i=0; i<this->array[pos].size(); i++) {
+            if(this->array[pos][i]==addr-(addr%blocksize)) {
+                return "present";
+            }
+        }
+        return "not present";
+    }
+
+    void insert(int addr) {
+
+        if(this->find(addr-(addr%blocksize))=="not present") {
+            int pos = (addr/blocksize) % (this->div);
+            //cout<<"pos"<<pos<<endl;
+            if(this->array[pos].size() < this->ass) {
+                if(this->data==0){
+                    coldin++;
+                }
+                else{
+                    cold++;
+                }
+                this->array[pos].push_back(addr-(addr%blocksize));
+                this->usage[addr-(addr%blocksize)]=0;
+               // cout << (addr-(addr%blocksize)) << " is added" << endl;
+            }
+            else {
+                int ind=this->remove(repoli,addr-(addr%blocksize));
+if(data==0){
+    capacityin++;
+}
+else {
+    capacity++;
+}
+               // cout << this->array[pos][ind] << " is removed" << endl;
+                this->array[pos][ind]=addr-(addr%blocksize);
+                this->usage[addr-(addr%blocksize)]=0;
+               // cout <<(addr-(addr%blocksize)) << " is added" << endl;
+            }
+        }
+        else {
+          //  cout << "already present" << endl;
+        }
+    }
+
+    int remove(string policy, int addr) {
+        int pos=(addr/blocksize)%(this->div);
+        if(policy=="random") {
+            int rn=rand()%this->ass;
+            return rn;
+        }
+        if(policy=="LFU") {
+            int ind=0;
+            int rem=0;
+            for(int i=0; i<this->ass; i++) {
+                if(this->usage[this->array[pos][i]]<=this->usage[this->array[pos][ind]]) {
+                    ind=rem;
+                    rem=i;
+                }
+            }
+            return rem;
+        }
+        if(policy=="FIFO") {
+            int rem=this->queue[pos];
+            this->queue[pos]++;
+            return rem%this->ass;
+        }
+        return -1;
+    }
+};
+// class set_associative_cache {
+// public:
+//     int size, ass, curr, div,blocksize,cachesize,as;
+//     string repoli;
+//     unordered_map<int,int> usage;
+//     unordered_map<int,int> queue;
+//     unordered_map<int,vector<int>> array;
+
+// public:
+//     set_associative_cache(int size, int ass) {
+//         this->size = size;
+//         this->ass = ass;
+//         this->curr = 0;
+//         this->div = this->size / this->ass;
+//         for(int i=0; i<this->div; i++) {
+//             this->array[i] = {};
+//         }
+//     }
+// public :
+//      set_associative_cache() {
+//         int blocksize;
+//        int cachesize;
+//        int as;
+//        string repoli;
+//        if(peep==0)
+//        {cout<<"for intruction caches"<<endl;
+//         cout<<" NOTE:(>32)"<<endl;
+//        peep++;}
+//        else {
+//         cout<<"for data caches"<<endl;
+       
+//        }
+
+//        cout<<"enter cachesize";
+
+//        cin>>cachesize;
+//       cout<<"enter block size"<<endl;
+//       cin>>blocksize;
+      
+//       cout<<"Enter associativity";
+//       cin>>as;
+//       cout<<"Enter replacement policy"<<endl;
+     
+//      cin>>repoli;
+//        this->cachesize=cachesize;
+//       this->repoli=repoli;
+//       if(peep==0){
+//         blocksize=blocksize/8;
+//       }
+//       this->blocksize=blocksize;
+//         this->size = this->cachesize/this->blocksize;
+//         this->ass = as;
+//         this->curr = 0;
+//         this->div = this->size / this->ass;
+//         for(int i=0; i<this->div; i++) {
+//             this->array[i] = {};
+//         }
+//     }
+
+//     void print() {
+//         for(int i=0; i<this->div; i++) {
+//             cout<<"div"<<i+1<<"ass"<<this->array[i].size()<<endl;
+//             for(int j=0; j<this->array[i].size(); j++) {
+                
+//                 cout << this->array[i][j] << " ";
+//                 for(int k=1;k<blocksize/4;k++){
+//                     cout<<this->array[i][j]+(4*k)<<" ";
+//                 }
+//                 cout<<endl;
+//             }
+//             cout << endl;
+//         }
+//     }
+
+//     string readcache(int addr) {
+//         if(this->find(addr)=="present") {
+//             if(this->usage.find(addr)==this->usage.end()) {
+//                 this->usage[addr-(addr%blocksize)]=1;
+//             }
+//             else {
+//                 this->usage[addr-(addr%blocksize)]++;
+//             }
+//             return "hit";
+//         }
+//         else {
+//             return "miss";
+//         }
+//     }
+
+//     string find(int addr) {
+//         int pos = (addr-(addr%blocksize)) % this->div;
+//         for(int i=0; i<this->array[pos].size(); i++) {
+//             if(this->array[pos][i]==addr-(addr%blocksize)) {
+//                 return "present";
+//             }
+//         }
+//         return "not present";
+//     }
+
+//     void insert(int addr) {
+
+//         if(this->find(addr-(addr%blocksize))=="not present") {
+//             int pos = (addr/blocksize) % (this->div);
+//             cout<<"pos"<<pos<<endl;
+//             if(this->array[pos].size() < this->ass) {
+//                 this->array[pos].push_back(addr-(addr%blocksize));
+//                 this->usage[addr-(addr%blocksize)]=0;
+//                 cout << (addr-(addr%blocksize)) << " is added" << endl;
+//             }
+//             else {
+//                 int ind=this->remove(repoli,addr-(addr%blocksize));
+//                 cout << this->array[pos][ind] << " is removed" << endl;
+//                 this->array[pos][ind]=addr-(addr%blocksize);
+//                 this->usage[addr-(addr%blocksize)]=0;
+//                 cout <<(addr-(addr%blocksize)) << " is added" << endl;
+//             }
+//         }
+//         else {
+//             cout << "already present" << endl;
+//         }
+//     }
+
+//     int remove(string policy, int addr) {
+//         int pos=(addr/blocksize)%(this->div);
+//         if(policy=="random") {
+//             int rn=rand()%this->ass;
+//             return rn;
+//         }
+//         if(policy=="LFU") {
+//             int ind=0;
+//             int rem=0;
+//             for(int i=0; i<this->ass; i++) {
+//                 if(this->usage[this->array[pos][i]]<=this->usage[this->array[pos][ind]]) {
+//                     ind=rem;
+//                     rem=i;
+//                 }
+//             }
+//             return rem;
+//         }
+//         if(policy=="FIFO") {
+//             int rem=this->queue[pos];
+//             this->queue[pos]++;
+//             return rem%this->ass;
+//         }
+//         return -1;
+//     }
+// };
+ set_associative_cache I$;
+ set_associative_cache D$;
+
+
+int tempx = 0;
+int cycles;
+int instructionsexecuted;
+float CPI;
+int datatrans = 0;
+int aluinstr = 0;
+int ctrlinstr = 0;
+int nofstalls = 0;
+int datahazards = 0;
+int ctrlhazard = 0;
+int branchmis = 0;
+int stalldata = 0;
+int stallctrl = 0;
+struct instr
+{
+    string opcode;
+    string op;
+    int rs1;
+    int rs2;
+    int rd = -1;
+    int imm;
+    string func3;
+    string func7;
+};
 vector<string> MachineCode;
+vector<instr> instru;
 map<string, int> memory;
+vector<instr> tex;
+int sz;
 int pc = 0;
 int memoutput;
 string convertHexa(int);
-int execute(struct instr );
+int execute(struct instr);
 
 int reg[32];
 string dectostr(int n)
-{int k=n;
+{
+    int k = n;
     string s = "";
     if (n == 0)
     {
         s = "0";
         return s;
     }
-    if(n<0){
-        //s="-";
-        n=-n;
+    if (n < 0)
+    {
+        // s="-";
+        n = -n;
     }
     while (n > 0)
     {
@@ -26,8 +380,9 @@ string dectostr(int n)
         s = s + c;
         n /= 10;
     }
-    if(k<0){
-        s=s+"-";
+    if (k < 0)
+    {
+        s = s + "-";
     }
     reverse(s.begin(), s.end());
     return s;
@@ -76,13 +431,13 @@ string dectobin(int integer, int length)
     }
     else
     {
-         integer= (1 << 31) + integer;
-       // integer += pow(2, length - 1);
+        integer = (1 << 31) + integer;
+        // integer += pow(2, length - 1);
         // string temp = bitset<32>(integer).to_string();
         // int le = temp.length();
         // string binary = "1" + string(length - 1 - le, '0') + temp[1];
-         string binary = bitset<32>(integer).to_string();
-         binary[0]='1';
+        string binary = bitset<32>(integer).to_string();
+        binary[0] = '1';
         return binary;
     }
 }
@@ -113,7 +468,7 @@ void readFile()
     {
         string h = s.substr(s.length() - 8, 8);
 
-        cout << h << endl;
+        //  cout << h << endl;
 
         MachineCode.push_back(h);
     }
@@ -122,14 +477,7 @@ void readFile()
         cout << MachineCode[i] << endl;
     }
 }
-struct instr
-{
-    string op;
-    int rs1;
-    int rs2;
-    int rd;
-    int imm;
-};
+
 struct ALU
 {
     int mem;
@@ -143,7 +491,7 @@ void print(struct instr in)
     cout << "rs1 : " << in.rs1 << endl;
     cout << "rs2 : " << in.rs2 << endl;
     cout << "imm: " << in.imm << endl;
-    cout<<"alu: "<<execute(in)<<endl;
+    cout << "alu: " << execute(in) << endl;
 }
 string tobin(char a)
 {
@@ -293,7 +641,7 @@ struct instr convert(string a)
     {
         opcode = opcode + s[i];
     }
-
+    ret.opcode = opcode;
     if (opcode == "0110011")
     {
         // let ret = { op: "", rd: 0, rs1: 0, rs2: 0,imm: 0 }
@@ -328,6 +676,8 @@ struct instr convert(string a)
         ret.rs1 = toint(r1);
         ret.rs2 = toint(r2);
         ret.rd = toint(r);
+        ret.func3 = fun3;
+        ret.func7 = fun7;
         if (fun3 == "000" && fun7 == "0000000")
         {
             ret.op = "add";
@@ -1076,36 +1426,36 @@ int execute(struct instr ins)
     if (op == "jal")
     {
         alu = imm;
-         alu = savefun(alu, 31);
+        alu = savefun(alu, 31);
     }
 
-    if(op=="lui")
+    if (op == "lui")
     {
-        alu=imm<<12;
+        alu = imm << 12;
     }
-    if(op=="auipc")
+    if (op == "auipc")
     {
-        alu=imm<<12;
+        alu = imm << 12;
     }
     return alu;
 }
 
 void memoryfun(struct instr ins)
 {
-    
+
     string op = ins.op;
     if (op == "sb" || op == "sh" || op == "sw")
     {
         int alu = execute(ins);
         string save = dectostr(alu);
-        memory[save] =reg[ ins.rs2];
+        memory[save] = reg[ins.rs2];
         // string s=save+ "  : " +dectostr(reg[ins.rs1]);
     }
 
     if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
     {
         int alu = execute(ins);
-        
+
         string save = dectostr(alu);
         memoutput = memory[save];
     }
@@ -1126,25 +1476,22 @@ void writeback(struct instr ins)
     else if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
     {
         int rd = ins.rd;
-        int alu=execute(ins);
+        int alu = execute(ins);
         // cout<<"write back alu ;"<<alu<<endl;
-        string s=dectostr(alu);
+        string s = dectostr(alu);
         // cout<<"write back ka "<<rd<<endl;
         reg[rd] = memory[s];
         // cout<<"memory : "<<reg[rd]<<endl;
-
-        
     }
-    else if(op=="lui")
+    else if (op == "lui")
     {
         int rd = ins.rd;
-        reg[rd]=alu;
+        reg[rd] = alu;
     }
-    else if(op=="auipc")
+    else if (op == "auipc")
     {
         int rd = ins.rd;
-        reg[rd]=alu+pc;
-
+        reg[rd] = alu + pc;
     }
     else
     {
@@ -1194,42 +1541,40 @@ string create_ins(struct instr instruction)
     int rd = instruction.rd;
     int rs1 = instruction.rs1;
     int rs2 = instruction.rs2;
-    int imm=instruction.imm;
-    string s="";
+    int imm = instruction.imm;
+    string s = "";
     if (op == "bge" || op == "blt" || op == "bne" || op == "beq" || op == "bltu" || op == "bgeu" || op == "jal" || op == "jalr")
     {
-        s = op + " x" + dectostr(rs1) + " x" +dectostr(rs2)+" "+dectostr(imm);
+        s = op + " x" + dectostr(rs1) + " x" + dectostr(rs2) + " " + dectostr(imm);
     }
-    if(op=="add" || op=="sub" || op=="xor" || op=="or" || op=="and" || op=="sll" || op=="srl"|| op=="sra" || op=="slt" || op=="sltu")
+    if (op == "add" || op == "sub" || op == "xor" || op == "or" || op == "and" || op == "sll" || op == "srl" || op == "sra" || op == "slt" || op == "sltu")
     {
-        s = op +" x"  +dectostr(rd)+ " x" + dectostr(rs1) + " x" +dectostr(rs2);
+        s = op + " x" + dectostr(rd) + " x" + dectostr(rs1) + " x" + dectostr(rs2);
     }
-    if(op=="addi" || op=="xori" || op=="ori" || op=="andi" || op=="slli" || op=="srli"|| op=="srai" || op=="slti" || op=="sltiu")
+    if (op == "addi" || op == "xori" || op == "ori" || op == "andi" || op == "slli" || op == "srli" || op == "srai" || op == "slti" || op == "sltiu")
     {
-        s = op +" x"  +dectostr(rd)+ " x" + dectostr(rs1)+" "  +dectostr(imm);
+        s = op + " x" + dectostr(rd) + " x" + dectostr(rs1) + " " + dectostr(imm);
     }
-    if(op=="lb" || op=="lh" || op=="lw" || op=="lbu" || op=="lhu" )
+    if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
     {
-        s = op +" x"  +dectostr(rd)+" "+dectostr(imm)+ "(x" + dectostr(rs1) + ")";
-        
+        s = op + " x" + dectostr(rd) + " " + dectostr(imm) + "(x" + dectostr(rs1) + ")";
     }
-    if(op=="sb" || op=="sh" || op=="sw" )
+    if (op == "sb" || op == "sh" || op == "sw")
     {
-        s = op +" x"  +dectostr(rs2)+" "+dectostr(imm)+ "(x" + dectostr(rs1) + ")";
+        s = op + " x" + dectostr(rs2) + " " + dectostr(imm) + "(x" + dectostr(rs1) + ")";
     }
-    if(op=="jal" || op=="jalr")
+    if (op == "jal" || op == "jalr")
     {
-        s = op +" x"  +dectostr(rd)+" "+dectostr(imm);
-        
+        s = op + " x" + dectostr(rd) + " " + dectostr(imm);
     }
-    if(op=="lui" || op=="auipc")
+    if (op == "lui" || op == "auipc")
     {
-        string s=op+" x"+dectostr(rd)+" "+dectostr(imm);
+        string s = op + " x" + dectostr(rd) + " " + dectostr(imm);
         return s;
     }
-    if(op=="ecall" || op=="ebreak")
+    if (op == "ecall" || op == "ebreak")
     {
-        s=op;
+        s = op;
     }
 
     return s;
@@ -1237,44 +1582,590 @@ string create_ins(struct instr instruction)
 void create_mem()
 {
     ofstream memfile("./Memory.txt");
-    memfile<<"Addresses    :     value stored \n";
-    for(auto i:memory)
-    {string x=i.first;
-        string s=convertHexa(stoi(x)) + "  :  "+dectostr(i.second)+"\n";
-        memfile<<s;
+    memfile << "Addresses    :     value stored \n";
+    for (auto i : memory)
+    {
+        string x = i.first;
+        string s = convertHexa(stoi(x)) + "  :  " + dectostr(i.second) + "\n";
+        memfile << s;
     }
 }
+
+int cycle = 4;
+struct IF
+{
+
+    int pc = -4;
+    string instruction = "";
+};
+
+struct ID
+{
+    string op = "";
+    int pc = -4;
+    int rs1 = -1;
+    int rs2 = -1;
+    int imm;
+    int rd = -1;
+    string opcode;
+    string func3;
+    string func7;
+};
+
+struct EX
+{
+    string op = "";
+    int pc = -4;
+    int rs1 = -1;
+    int rs2 = -1;
+    int imm;
+    int rd = -1;
+    string opcode = "";
+    string funct3;
+    string funct7;
+    int alu_result;
+};
+
+struct MEM
+{
+    int pc = -4;
+    int rs1 = -1;
+    int rs2 = -1;
+    int imm;
+    int rd = -1;
+    string opcode = "";
+    string funct3 = "";
+    string funct7 = "";
+    int alu_result;
+    string mem_address = "";
+    int mem_data;
+    string op = "";
+};
+
+struct WB
+{
+    int pc = -4;
+    int rs1=-1;
+    int rs2=-1;
+    int imm;
+    int rd=-1;
+    string opcode="";
+    string funct3="";
+    string funct7="";
+    int alu_result;
+    int mem_data;
+};
+
+// Define the pipeline registers
+IF if_id_reg;
+ID id_ex_reg;
+EX ex_mem_reg;
+MEM mem_wb_reg;
+vector<int> stalls;
+
+IF pfetch(int PC)
+{
+    IF pinstr;
+    // cout<<"sz"<<sz<<endl;
+    // cout<<" [fetch m pc]"<<PC<<endl;
+    if (PC > 4 * sz)
+    {
+        pinstr.instruction = "";
+        pinstr.pc = PC - 4;
+    }
+    else
+    {
+       string kell= I$.readcache(pc);
+       accessin++;
+       if(kell=="hit"){
+        hitin++;
+       }
+       else{
+        missin++;
+        I$.insert(pc);
+       }
+        string hex_code = MachineCode[PC / 4];
+        struct instr instruction = convert(hex_code);
+        // cout<<"pfetch m hex code"<<hex_code<<endl;
+        pinstr.instruction = hex_code;
+        pinstr.pc = PC;
+    }
+    return pinstr;
+}
+ID pdecode(IF reg)
+{ // cout<<"decode mai pc"<<reg.instruction<<endl;
+    ID ins;
+    if (reg.pc == -4)
+    {
+        return ins;
+    }
+    else if (reg.instruction != "")
+    {
+        string hexcode = reg.instruction;
+        struct instr instruction = convert(hexcode);
+        ins.pc = reg.pc;
+        ins.rs1 = instruction.rs1;
+        ins.rs2 = instruction.rs2;
+        ins.imm = instruction.imm;
+        ins.rd = instruction.rd;
+        ins.opcode = instruction.opcode;
+        ins.func3 = instruction.func3;
+        ins.func7 = instruction.func7;
+        ins.op = instruction.op;
+
+        return ins;
+    }
+
+    else
+    {
+
+        cout << " all fetched";
+        ins.pc = reg.pc;
+        return ins;
+    }
+}
+EX pexecute(ID reg)
+{ // cout<<" exct m pc"<<reg.op<<endl;
+    EX exe;
+
+    // if (reg.pc == 4 * sz && reg.op == "")
+    // {
+    //     cout << "all executed" << endl;
+    //     exe.op = "";
+    //     exe.pc = reg.pc;
+    // }
+
+    if (reg.pc == -4)
+    {
+        exe.op = "";
+        exe.pc = reg.pc;
+    }
+    else
+    {
+        instr ins;
+        exe.pc = reg.pc;
+        exe.rs1 = reg.rs1;
+        exe.rs2 = reg.rs2;
+        exe.imm = reg.imm;
+        exe.rd = reg.rd;
+        exe.opcode = reg.func3;
+        exe.funct3 = reg.func3;
+        exe.funct7 = reg.func7;
+        exe.op = reg.op;
+        ins.op = reg.op;
+        ins.rd = reg.rd;
+        ins.rs1 = reg.rs1;
+
+        ins.rs2 = reg.rs2;
+        ins.imm = reg.imm;
+        exe.alu_result = execute(ins);
+        //      cout<<" ex m pc"<<exe.pc<<endl;
+        // cout<<" exct m ins"<<exe.op<<endl;
+    }
+    return exe;
+}
+MEM pmem(EX regg)
+{
+    MEM mem;
+    if (regg.pc == -4)
+    {
+        cout << "if" << endl;
+        mem.op = " ";
+        mem.pc = -4;
+    }
+    else
+    {
+        mem.pc = regg.pc;
+        mem.rs1 = regg.rs1;
+        mem.rs2 = regg.rs2;
+        mem.imm = regg.imm;
+        mem.rd = regg.rd;
+        mem.opcode = regg.opcode;
+        mem.funct3 = regg.funct3;
+        mem.funct7 = regg.funct7;
+        mem.alu_result = regg.alu_result;
+        mem.op = regg.op;
+
+        int rs2 = mem.rs2;
+        int pmemout;
+        string paddress;
+        string op = regg.op;
+        if (op == "sb" || op == "sh" || op == "sw")
+        {
+            int alu = mem.alu_result;
+            string save = dectostr(alu);
+          // cout<<save<<endl;
+           string res= D$.readcache(alu);
+           access++;
+           if(res=="hit"){
+hit++;
+           }
+           else {
+            miss++;
+            D$.insert(alu);
+           }
+
+            memory[save] = reg[rs2];
+            datatrans++;
+            // string s=save+ "  : " +dectostr(reg[ins.rs1]);
+        }
+
+        if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
+        {
+            datatrans++;
+            // int alu = execute(ins);
+            int alu = regg.alu_result;
+            string save = dectostr(alu);
+             string res= D$.readcache(alu);
+             access++;
+           if(res=="hit"){
+hit++;
+           }
+           else {
+            miss++;
+            D$.insert(alu);
+           }
+
+            pmemout = memoutput = memory[save];
+        }
+        mem.mem_address = paddress;
+        mem.mem_data = pmemout;
+    }
+    // cout<<"pmem m pc "<<mem.op<<endl;
+    return mem;
+}
+WB pwriteback(MEM regis)
+{
+
+    WB wrtn;
+
+    if (regis.pc == -4)
+    {
+        cout << "-4" << endl;
+        wrtn.pc = -4;
+    }
+    else
+    {
+        wrtn.pc = regis.pc;
+        wrtn.rs1 = regis.rs1;
+        wrtn.rs2 = regis.rs2;
+        wrtn.imm = regis.imm;
+        wrtn.rd = regis.rd;
+        wrtn.opcode = regis.opcode;
+        wrtn.funct3 = regis.funct3;
+        wrtn.funct7 = regis.funct7;
+        wrtn.alu_result = regis.alu_result;
+        wrtn.mem_data = regis.mem_data;
+
+        int rd = regis.rd;
+        string op = regis.op;
+        int alu = regis.alu_result;
+        if (op == "sb" || op == "sh" || op == "sw")
+        {
+        }
+        else if (op == "bge" || op == "blt" || op == "bne" || op == "beq" || op == "bltu" || op == "bgeu" || op == "jal" || op == "jalr")
+        {
+        }
+        else if (op == "lb" || op == "lh" || op == "lw" || op == "lbu" || op == "lhu")
+        {
+            int rd = regis.rd;
+            // int alu=execute(ins);
+            //  cout<<"write back alu ;"<<alu<<endl;
+            string s = dectostr(alu);
+            // cout<<"write back ka "<<rd<<endl;
+            reg[rd] = memory[s];
+            // cout<<"memory : "<<reg[rd]<<endl;
+        }
+        else if (op == "lui")
+        {
+            //  int rd = ins.rd;
+            reg[rd] = alu;
+        }
+        else if (op == "auipc")
+        {
+            // int rd = ins.rd;
+            reg[rd] = alu + pc;
+        }
+        else
+        {
+            reg[rd] = alu;
+            // cout<<"wb dn";
+        }
+    }
+    // cout<<" pwb me pc"<<wrtn.rd<<endl;
+    return wrtn;
+}
+
+// Function to calculate stalls for a vector of instructions
+struct cycleval{
+    IF if_id_reg;
+ID id_ex_reg;
+EX ex_mem_reg;
+MEM mem_wb_reg;
+};
+vector<cycleval> cyclereg;
+
+int nostall(vector<instr> vex)
+{
+    int sum = 0;
+    // vector<int> v;
+
+    for (int i = 1; i < vex.size(); i++)
+    {
+        instr inst1 = vex[i];
+        instr inst2;
+        instr inst3;
+        instr inst4;
+        if (i > 0)
+        {
+            inst2 = vex[i - 1];
+        }
+        if (i > 1)
+        {
+            inst3 = vex[i - 2];
+        }
+        if (i > 2)
+        {
+            inst4 = vex[i - 3];
+        }
+        if ((inst1.rs1 == inst2.rd || inst2.rd == inst1.rs2) && inst2.rd != -1 && i > 0)
+        {
+            datahazards++;
+            sum = sum + 3;
+            //stalls.push_back(3);
+        }
+        else if ((inst3.rd == inst1.rs1 || inst1.rs2 == inst3.rd) && inst3.rd != -1 && i > 1)
+        {
+            datahazards++;
+            sum = sum + 2;
+           // stalls.push_back(2);
+        }
+        else if ((inst1.rs2 == inst4.rd || inst1.rs1 == inst4.rd) && inst4.rd != -1 && i > 2)
+        {
+            datahazards++;
+            sum = sum + 1;
+           // stalls.push_back(1);
+        }
+        else
+        {
+           // stalls.push_back(0);
+        }
+        stalls.push_back(sum);
+    }
+    // tempx = sum;
+    return sum;
+}
+int datafor(vector<instr> vex)
+{
+
+    // vector<int> v;
+    int sum = 0;
+    for (int i = 1; i < vex.size(); i++)
+    {
+        // 1  cout<<"opcode"<<vex[i-1].opcode<<endl;
+        if ((vex[i].rs1 == vex[i - 1].rd || vex[i].rs2 == vex[i - 1].rd) && vex[i - 1].opcode == "0000011")
+        {
+            sum++;
+            datahazards++;
+            //stalls.push_back(1);
+        }
+      else  {
+           // stalls.push_back(0);
+        }
+         stalls.push_back(sum);
+    }
+
+    return sum;
+}
+map<int, int> pred;
+int chaz = 0;
+int choice;
+int pipeline;
+int cicle = 0;
+
 int main()
 {
+
     readFile();
     reg[3] = 0;
-
-    int sz = MachineCode.size();
-        ofstream ins_file("./instruction_file.txt");
+    stalls.push_back(0);
+    sz = MachineCode.size();
+    cout << "pipeline on/off(1/0)?";
+    cin >> pipeline;
+ cout<<" enter cache size"<<endl;
+      
+    cout<<choice<<endl;
+   
+    ofstream ins_file("./instruction_file.txt");
+    // cout << "sizze" << sz << endl;
+    pc = 0;
+    
     while (pc < 4 * sz)
     {
+
+     
+
         string hex_code = MachineCode[pc / 4];
 
         struct instr instruction = convert(hex_code);
+        if (instruction.opcode == "0110011")
+        {
+            aluinstr++;
+        }
+        if (instruction.opcode == "1101111" || instruction.opcode == "1100111" || instruction.opcode == "1100011")
+        {
+            ctrlinstr++;
+        }
 
-        string s=create_ins(instruction)+"\n";
-        ins_file<<s;
+        tex.push_back(instruction);
+        // cout << pc << endl;
+        if_id_reg = pfetch(pc);
+        // cout << "if_id pc" << if_id_reg.pc << endl;
+        id_ex_reg = pdecode(if_id_reg);
+        // cout << "id_ex" << id_ex_reg.pc << endl;
+        ex_mem_reg = pexecute(id_ex_reg);
 
-        print(instruction);
-        int alu = execute(instruction);
-        memoryfun(instruction);
-        writeback(instruction);
+        mem_wb_reg = pmem(ex_mem_reg);
+        WB wbad = pwriteback(mem_wb_reg);
+        instru.push_back(instruction);
+        string s = create_ins(instruction) + "\n";
+        ins_file << s;
+       
+
+        if (pred[pc] == 0 && (instruction.opcode == "1100011" || instruction.opcode == "1101111"))
+        {
+            ctrlhazard++;
+            if (address(instruction) != 4)
+            {
+                pred[pc] = 1;
+                chaz++;
+            }
+            else
+            {
+            }
+        }
+        if (pred[pc] == 1 && (instruction.opcode == "1100011" || instruction.opcode == "1101111"))
+        {
+            ctrlhazard++;
+            if (address(instruction) == 4)
+            {
+                chaz++;
+                pred[pc] = 0;
+            }
+        }
         pc += address(instruction);
 
         cout << endl;
     }
+
+    branchmis = chaz;
+    stallctrl = 2 * chaz;
+
+    int x;
+
+    if (pipeline == 0)
+    {
+        for (int i = 0; i < tex.size(); i++)
+        {
+            print(tex[i]);
+        }
+        cout<<"For I$:"<<endl;
+        int memorystallsin=hitin+(20*missin);
+        int memorystalls=hit+(20*miss);
+        float CPI = static_cast<float>(5*tex.size()+memorystallsin+memorystallsin) / tex.size();
+        // cout << "total number of cycles " << (5 * tex.size()) << endl;
+        // cout << "total instruction executed " << tex.size() << endl;
+        // cout << "CPI :" << endl;
+        // cout << "No. of data transfer "
+        //      << "0" << endl;
+        // cout << "No. of ALU instruction " << aluinstr << endl;
+        // cout << "No. of control instruction executed " << ctrlinstr << endl;
+        // cout << "there were no stalls and no hazards" << endl;
+        cout<<"No. of access:"<<accessin<<endl;
+        cout<<"No. of hits:"<<hitin<<endl;
+        cout<<"No. of misses"<<missin<<endl;
+        cout<<"No. of cold misses"<<coldin<<endl;
+        cout<<"No. of capacity misses"<<capacityin<<endl;
+        cout<<"No. of memory stalls"<<memorystallsin<<endl;
+        cout<<"CPI:"<<CPI<<endl;
+          cout<<"***************************"<<endl;
+          cout<<"D$"<<endl;
+          cout<<"No. of access:"<<access<<endl;
+        cout<<"No. of hits:"<<hit<<endl;
+        cout<<"No. of misses"<<miss<<endl;
+        cout<<"No. of cold misses"<<cold<<endl;
+        cout<<"No. of capacity misses"<<capacity<<endl;
+        cout<<"No. of memory stalls"<<memorystalls<<endl;
+        cout<<"CPI:"<<CPI<<endl;
+    }
+    else if (pipeline == 1)
+    {
+        cout << "data forwarding on/off(1/0)?";
+        cin >> choice;
+        if (choice == 1)
+        {
+            x = datafor(tex);
+        }
+        if (choice == 0)
+        {
+            x = nostall(tex);
+        }
+        
+        cycles = cycle + 2 * chaz + x + tex.size();
+        nofstalls = chaz * 2 + x;
+        CPI = cycles / tex.size();
+        
+        int memorystallsin=hitin+(20*missin);
+        int memorystalls=hit+(20*miss);
+        CPI = static_cast<float>(cycles+memorystalls+memorystallsin) / tex.size();
+        // cout << "total number of cycles " << cycles << endl;
+        // cout << "total instruction executed " << tex.size() << endl;
+        // cout << "CPI " << CPI << endl;
+        // cout << "No. of data transfer " << datatrans << endl;
+        // cout << "No. of ALU instruction " << aluinstr << endl;
+        // cout << "No. of control instruction executed " << ctrlinstr << endl;
+        // cout << "No. of stall/bubbles in pipeline " << nofstalls << endl;
+        // cout << "No. of data hazards " << datahazards << endl;
+        // cout << "NO. of control hazards " << ctrlhazard << endl;
+        // cout << "No. of branch mispredictions " << chaz << endl;
+        // cout << "No. of stalls due to data hazards " << x << endl;
+        // cout << "No. of stalls due to control hazards " << 2 * chaz << endl;
+        for (int i = 0; i < tex.size(); i++)
+        {
+            print(tex[i]);
+        }
+        cout<<"I$"<<endl;
+         cout<<"No. of access:"<<accessin<<endl;
+        cout<<"No. of hits:"<<hitin<<endl;
+        cout<<"No. of misses"<<missin<<endl;
+        cout<<"No. of cold misses"<<coldin<<endl;
+        cout<<"No. of capacity misses"<<capacityin<<endl;
+        cout<<"No. of memory stalls"<<memorystallsin<<endl;
+        cout<<"CPI:"<<CPI<<endl;
+          cout<<"***************************"<<endl;
+          cout<<"D$:"<<endl;
+          cout<<"No. of access:"<<access<<endl;
+        cout<<"No. of hits:"<<hit<<endl;
+        cout<<"No. of misses"<<miss<<endl;
+        cout<<"No. of cold misses"<<cold<<endl;
+        cout<<"No. of capacity misses"<<capacity<<endl;
+        cout<<"No. of memory stalls"<<memorystalls<<endl;
+        cout<<"CPI:"<<CPI<<endl;
+    }
+// cout<<"hit"<<hit<<endl;
+// cout<<"miss"<<miss<<endl;
+// cout<<"hitin"<<hitin<<endl;
+// cout<<"missin"<<missin<<endl;
+// cout<<"capacityin"<<accessin<<endl;
+// cout<<"capacity"<<access<<endl;
     ofstream regis("./register_file.txt");
+
     for (int i = 0; i < 32; i++)
     {
-        string s="x"+dectostr(i)+"  :  "+dectostr(reg[i])+"\n";
-        regis<<s;
+        string s = "x" + dectostr(i) + "  :  " + dectostr(reg[i]) + "\n";
+        regis << s;
     }
-        create_mem();
+    create_mem();
 
     return 0;
 }
